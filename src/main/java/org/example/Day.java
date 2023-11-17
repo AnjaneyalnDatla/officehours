@@ -7,6 +7,14 @@ public class Day {
     String close;
     String name;
 
+    public Day() {
+    }
+    
+    public Day(String open, String close, String name) {
+        this.open = open;
+        this.close = close;
+        this.name = name;
+    }
     public String getOpen() {
         return open;
     }
