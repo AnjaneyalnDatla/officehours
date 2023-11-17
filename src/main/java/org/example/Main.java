@@ -7,13 +7,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         String jsonString = "{\"tz\": \"CT\", " +
-                "\"m\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\"}, " +
-                "\"t\": {\"open\": \"8:00AM\", \"close\": \"3:30PM\" }, " +
-                "\"w\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
-                "\"th\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
-                "\"f\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
-             
-                "\"sun\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }  }";
+        "\"m\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\"}, " +
+        "\"t\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
+        "\"th\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
+        "\"f\": {\"open\": \"8:00AM\", \"close\": \"4:30PM\" }, " +
+        "\"sat\": {\"open\": \"8:00AM\", \"close\": \"4:00PM\" }, " +
+        "\"sun\": {\"open\": \"8:00AM\", \"close\": \"4:00PM\" }  }";
         // Build a structure out of the string
         BusinessHours businessHours = new ObjectMapper().readValue(jsonString, BusinessHours.class);
         // return the string

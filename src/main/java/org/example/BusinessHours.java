@@ -51,8 +51,8 @@ public class BusinessHours {
 
         buildWorkingHoursList(days, daysWithSameWorkingHours);
         return daysWithSameWorkingHours.stream()
-        .map(workingHours -> workingHours.replace("-%s", "")) // remove any string placeholders for single day entries
-        .filter(workingHours -> !workingHours.contains("00-00")) // removing any days off
+                .map(workingHours -> workingHours.replace("-%s", "")) // remove any string placeholders for single day entries
+                .filter(workingHours -> !workingHours.contains("00-00")) // removing any days off
                 .collect(Collectors.toList());
     }
 
@@ -72,7 +72,7 @@ public class BusinessHours {
         if (day != null) {
             days.add(day);
         } else {
-            days.add(new Day(DEFAULT_NONWORKING_TIME, DEFAULT_NONWORKING_TIME, name)); // Adding a default day, which can be filtered out later
+            days.add(new Day(DEFAULT_NONWORKING_TIME, DEFAULT_NONWORKING_TIME, name)); // Adding a default day, which                                                                          // can be filtered out later
         }
     }
 
@@ -82,14 +82,18 @@ public class BusinessHours {
      * @param daysWithSameWorkingHours
      */
     private void buildWorkingHoursList(List<Day> days, List<String> daysWithSameWorkingHours) {
-        String tempKey = "";
-        String endDay = "%s"; // This will keep changing, so keeping this as placeholder
-        Integer continuousTimeIndex = 0;
+        // A key to look for matching working hours in a day
+        String tempKey = getKey(days, 0);
+        // An end day indicator. This field will be used to keep track of continuous days that have the same work hours
+        String endDay = "%s"; 
+        // An index field to keep track of where to update the end date
+        Integer continuousTimeIndex = 1;
+        // Initializing the first entry to the list of working days
+        addNewWorkingDaysEntry(days, daysWithSameWorkingHours, endDay, 0,tempKey);
         for (int i = 0; i < days.size(); i++) {
             // using the open and close hours as the key to identify days with same timmings
-            String key = days.get(i).getOpen() + "-" + days.get(i).getClose();
-            // Updating the end day to reflect the final end day with a series of days
-            // having same timmings
+            String key = getKey(days, i);
+            // Updating the end day to reflect the final end day with a series of days having same timmings
             if (tempKey.equalsIgnoreCase(key)) {
                 endDay = days.get(i).getName();
                 // Condition to check if we reached the end
@@ -100,18 +104,20 @@ public class BusinessHours {
             // create a new entry for days with different open and close timmings
             else {
                 tempKey = key;
-                if (continuousTimeIndex == i) {
-                    continuousTimeIndex = addNewWorkingDaysEntry(days, daysWithSameWorkingHours, endDay, i, key);
-                } else {
-                    // Update last entry
-                    updateLastContinuousWorkingHoursEntry(daysWithSameWorkingHours, endDay, continuousTimeIndex);
-                    // reset the end day
-                    endDay = "%s";
-                    addNewWorkingDaysEntry(days, daysWithSameWorkingHours, endDay, i, key);
-                }
-
+                // Update last entry
+                updateLastContinuousWorkingHoursEntry(daysWithSameWorkingHours, endDay, continuousTimeIndex);
+                // reset the end day
+                endDay = "%s";
+                // Add the new working hours entry
+                addNewWorkingDaysEntry(days, daysWithSameWorkingHours, endDay, i, key);
+                // Reset the continous working days index
+                continuousTimeIndex = daysWithSameWorkingHours.size();
             }
         }
+    }
+
+    private String getKey(List<Day> days, Integer index) {
+        return days.get(index).getOpen() + "-" + days.get(index).getClose();
     }
 
     private void updateLastContinuousWorkingHoursEntry(List<String> daysWithSameWorkingHours, String endDay,
@@ -120,14 +126,11 @@ public class BusinessHours {
         daysWithSameWorkingHours.set(continuousTimeIndex - 1, String.format(existingKey, endDay));
     }
 
-    private Integer addNewWorkingDaysEntry(List<Day> days, List<String> daysWithSameWorkingHours, String endDay, int i,
+    private void addNewWorkingDaysEntry(List<Day> days, List<String> daysWithSameWorkingHours, String endDay, int i,
             String key) {
-        Integer continuousTimeIndex;
         String workingHoursEntry = String.format(DAILY_BUSINESS_HOURS_FORMAT, days.get(i).getName(), endDay, key,
                 this.timeZone);
         daysWithSameWorkingHours.add(workingHoursEntry);
-        continuousTimeIndex = i + 1;
-        return continuousTimeIndex;
     }
 
     public String getTimeZone() {
