@@ -1,6 +1,6 @@
 package org.example;
 
-public enum DaysOrder {
+public enum DaysEnum {
 
     MONDAY("Mon"),
     TUESDAY("Tue"),
@@ -12,7 +12,7 @@ public enum DaysOrder {
 
     String name;
 
-    DaysOrder(String name) {
+    DaysEnum(String name) {
         this.name = name;
     }
 
